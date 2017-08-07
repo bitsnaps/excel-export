@@ -1,4 +1,5 @@
-This is the excel-export Grails plugin using [Apache POI](https://poi.apache.org/)
+This is the excel-export adapted for Grails v2.* (tested with v2.4.4) plugin using [Apache POI](https://poi.apache.org/)
+All credit goes to original author: Jakub Nabrdalik
 
 [![Build Status](https://travis-ci.org/TouK/excel-export.svg?branch=master)](https://travis-ci.org/TouK/excel-export) [ ![Download](https://api.bintray.com/packages/grails-excel-export/plugins/excel-export/images/download.svg) ](https://bintray.com/grails-excel-export/plugins/excel-export/_latestVersion)
 
@@ -31,6 +32,8 @@ List<Product> products = productFactory.createProducts()
 To export selected properties of those products to a file on disk, see the following example, where `withProperties` is a list of properties that are going to be exported to xlsx, in the given order:
 
 ```groovy
+import pl.touk.excel.export.XlsxExporter
+//...
 def withProperties = ['name', 'description', 'validTill', 'productNumber', 'price.value']
 new XlsxExporter('/tmp/myReportFile.xlsx').
     add(products, withProperties).
@@ -42,11 +45,13 @@ Notice that you can use nested properties (e.g. `price.value`) of your objects.
 To add a header row to the spreadshet and make the file downloadable from a controller, you do this:
 
 ```groovy
+import pl.touk.excel.export.WebXlsxExporter
+//...
 def headers = ['Name', 'Description', 'Valid Till', 'Product Number', 'Price']
 def withProperties = ['name', 'description', 'validTill', 'productNumber', 'price.value']
-
+def fileName = 'products.xlsx'
 new WebXlsxExporter().with {
-    setResponseHeaders(response)
+    setResponseHeaders(response, fileName)
     fillHeader(headers)
     add(products, withProperties)
     save(response.outputStream)
