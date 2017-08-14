@@ -1,6 +1,63 @@
 This is the excel-export adapted for Grails v2.* (tested with v2.4.4) plugin using [Apache POI](https://poi.apache.org/)
 All credit goes to original author: Jakub Nabrdalik
 
+# Simple Usage (Export data to a Speardsheet):
+
+```groovy
+import pl.touk.excel.export.WebXlsxExporter
+import grails.util.GrailsNameUtils
+...
+		List<Person> persons = Person.list()
+		def filename = 'persons.xlsx'
+		def withProperties =  Person.gormPersistentEntity.persistentPropertyNames
+		def naturalNames = withProperties.collect {GrailsNameUtils.getNaturalName(it)}
+		new WebXlsxExporter().with {
+			setResponseHeaders(response, filename)
+			// you can use natural properties names
+			fillHeader(naturalNames)
+			// data from a domain
+			add(persons, withProperties)
+			// adding custom data
+//			fillRow(["aaa", "bbb", 13, new Date()], 1)
+//			fillRow(["ccc", "ddd", 87, new Date()], 2)
+//			putCellValue(3, 3, "Now I'm here")
+			
+			//second sheet
+//			sheet('Second sheet').with {
+//				fillHeader(withProperties)
+//				add( persons, withProperties )
+//			}
+			save(response.outputStream)
+		}
+```
+
+# Write data to a predefined template:
+
+```groovy
+import pl.touk.excel.export.WebXlsxExporter
+...
+		List<Person> persons = Person.list()
+		def filename = 'persons.xlsx'
+		def withProperties =  Person.gormPersistentEntity.persistentPropertyNames
+
+		def filename = 'ReportTemplate'
+		// load predefined template a an InputStream
+		def template = grailsApplication.parentContext.getResource("classpath:template1.xlsx").inputStream
+		
+		File tempFile = File.createTempFile(filename, ".xlsx")
+		tempFile << template
+		
+		new WebXlsxExporter(tempFile.absolutePath).with {
+			setResponseHeaders(response, filename+'.xlsx')
+			sheet('Sheet1').with{
+				add(persons, withProperties)
+//				putCellValue(1, 2, "User Name")
+			}
+			save(response.outputStream)
+		}		
+```
+
+
 [![Build Status](https://travis-ci.org/TouK/excel-export.svg?branch=master)](https://travis-ci.org/TouK/excel-export) [ ![Download](https://api.bintray.com/packages/grails-excel-export/plugins/excel-export/images/download.svg) ](https://bintray.com/grails-excel-export/plugins/excel-export/_latestVersion)
 
 # What does it do?
@@ -253,11 +310,20 @@ Of course there is a corresponding `setCellStyle()` method, but this is a part o
 
 # How to get it installed?
 
+This version is not published to grails plugin repository, so you may need to install it to your local maven repository, like so:
+```groovy
+package-plugin
+maven-install
+```
 Like any other Grails plugin, just add to the `dependencies` block of your app's build.gradle file:
 ```groovy
 dependencies {
-    compile "org.grails.plugins:excel-export:2.1"
+    compile ":excel-export:0.1"
 }
+```
+or include it to your BuildConfig.groovy for live building dependency:
+```groovy
+grails.plugin.location.'excel-export' = '../excel-export'
 ```
 
 Excluding xerces may or may not be needed, depending on your setup. If you get

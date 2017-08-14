@@ -1,6 +1,8 @@
 package pl.touk.excel.export
 
 import javax.servlet.http.HttpServletResponse
+import grails.util.GrailsNameUtils
+
 
 class WebXlsxExporter extends XlsxExporter {
 
@@ -32,4 +34,6 @@ class WebXlsxExporter extends XlsxExporter {
         response.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         this
     }
+	
+	
 }
