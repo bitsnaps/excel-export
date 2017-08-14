@@ -1,7 +1,6 @@
 package pl.touk.excel.export
 
 import javax.servlet.http.HttpServletResponse
-import grails.util.GrailsNameUtils
 
 
 class WebXlsxExporter extends XlsxExporter {
