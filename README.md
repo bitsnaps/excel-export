@@ -311,9 +311,9 @@ Of course there is a corresponding `setCellStyle()` method, but this is a part o
 # How to get it installed?
 
 This version is not published to grails plugin repository, so you may need to install it to your local maven repository, like so:
-```groovy
-package-plugin
-maven-install
+```bash
+grails package-plugin
+grails maven-install
 ```
 Like any other Grails plugin, just add to the `dependencies` block of your app's build.gradle file:
 ```groovy
